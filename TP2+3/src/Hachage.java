@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 public class Hachage {
 
 
-    public static String toSHA1(byte[] convertme) {
+    public static byte[] toSHA1(byte[] convertme) {
         final char[] HEX_CHARS = "0123456789ABCDEF".toCharArray();
         MessageDigest md = null;
         try {
@@ -17,12 +18,12 @@ public class Hachage {
             e.printStackTrace();
         }
         byte[] buf = md.digest(convertme);
-        char[] chars = new char[2 * buf.length];
+        /*char[] chars = new char[2 * buf.length];
         for (int i = 0; i < buf.length; ++i) {
             chars[2 * i] = HEX_CHARS[(buf[i] & 0xF0) >>> 4];
             chars[2 * i + 1] = HEX_CHARS[buf[i] & 0x0F];
-        }
-        return new String(chars);
+        }*/
+        return buf;
     }
 
     public static void main(String[] args) throws NoSuchAlgorithmException, FileNotFoundException {
@@ -35,11 +36,37 @@ public class Hachage {
         while (lecteur.hasNextLine()) {
             dico.add(lecteur.nextLine());
         }
-        System.out.println(dico);
 
 
+        String word = "poisson";
 
+        System.out.println(nombreEssais(dico, word, 7));
 
-        System.out.println(toSHA1(message.getBytes()));
+    }
+
+    private static int nombreEssais(ArrayList<String> dico,  String word, int nbBit) {
+        int indexFiveBit = 1030;
+
+        int essais = 0;
+        byte[] wordInByte = toSHA1(word.getBytes());
+        int fiveBitWord = selectNbBit(wordInByte, nbBit);
+
+        while (fiveBitWord!= indexFiveBit) {
+            String wordIndex = dico.get(essais);
+            byte[] wordIndexByte = toSHA1(wordIndex.getBytes());
+            indexFiveBit = (selectNbBit(wordIndexByte, nbBit));
+            essais +=1;
+        }
+        return essais;
+    }
+
+    private static int selectNbBit(byte[] b, int i) {
+        if (i <= 8){
+            return b[0] % (1 << i);
+        }else {
+            int huitpremierBit=b[0] % (1 << i);
+            int neuviemeBit=b[1] % (1 << i);
+
+        }
     }
 }
