@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 public class Hachage {
 
-
     public static char[] toSHA1STR(byte[] convertme) {
         final char[] HEX_CHARS = "0123456789ABCDEF".toCharArray();
         MessageDigest md = null;
@@ -25,6 +24,7 @@ public class Hachage {
         }
         return chars;
     }
+
     public static byte[] toSHA1(byte[] convertme) {
         MessageDigest md = null;
         try {
@@ -35,25 +35,6 @@ public class Hachage {
         }
         byte[] buf = md.digest(convertme);;
         return buf;
-    }
-
-    public static void main(String[] args) throws NoSuchAlgorithmException, FileNotFoundException {
-        // String message = "Salut";
-
-        ArrayList<String> dico = new ArrayList<String>();
-        java.util.Scanner lecteur ;
-        java.io.File fichier = new java.io.File("TP2+3\\src\\dico.txt");
-        lecteur = new java.util.Scanner(fichier);
-        while (lecteur.hasNextLine()) {
-            dico.add(lecteur.nextLine());
-        }
-        lecteur.close();
-
-
-        String word = "poisson";
-        System.out.println(toSHA1STR(word.getBytes()));
-        System.out.println(nombreEssais(dico, word, 10));
-
     }
 
     private static int nombreEssais(ArrayList<String> dico,  String word, int nbBit) {
@@ -74,10 +55,28 @@ public class Hachage {
         }
         return essais;
     }
+
     private static int selectNbBit(byte[] wordByte, int i) {
         if (i <= 8)
             return wordByte[0] % (1 << i);
-        else 
+        else
             return (wordByte[0]%(1 << i)) << (wordByte[1] % (1 << i-8));
+    }
+
+    public static void main(String[] args) throws NoSuchAlgorithmException, FileNotFoundException {
+        // String message = "Salut";
+
+        ArrayList<String> dico = new ArrayList<>();
+        java.util.Scanner lecteur ;
+        java.io.File fichier = new java.io.File("src/dico.txt");
+        lecteur = new java.util.Scanner(fichier);
+        while (lecteur.hasNextLine()) {
+            dico.add(lecteur.nextLine());
+        }
+        lecteur.close();
+
+        String word = "poisson";
+        System.out.println(toSHA1STR(word.getBytes()));
+        System.out.println(nombreEssais(dico, word, 10));
     }
 }
